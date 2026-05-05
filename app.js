@@ -24,7 +24,7 @@ async function main() {
     const result = await productService.getProducts();
     console.log(`成功取得 ${result.products.length} 筆產品\n`);
     productService.displayProducts(result.products.slice(0, 3)); // 只顯示前 3 筆
-
+ 
     // 2. 取得產品分類
     console.log('\n--- 步驟 2：取得產品分類 ---');
     const categories = await productService.getCategories();
