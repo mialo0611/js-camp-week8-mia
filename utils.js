@@ -123,7 +123,7 @@ function validateCartQuantity(quantity) {
   if (quantity < 1 ) {
     return { isValid: false, error: '不可小於 1' };
   };
-    if ( quantity > 99) {
+  if ( quantity > 99) {
     return { isValid: false, error: '不可大於 99' };
   };
   return { isValid: true };
