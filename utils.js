@@ -11,6 +11,12 @@ const dayjs = require('dayjs');
  */
 function getDiscountRate(product) {
   // 請實作此函式
+  if (product.origin_price <=0 ) {
+    return '無折扣';
+  }else{
+    let discountRate = Math.round((product.price / product.origin_price) * 10) ;
+    return `${discountRate}折`;
+  };  
 }
 
 /**
@@ -20,6 +26,10 @@ function getDiscountRate(product) {
  */
 function getAllCategories(products) {
   // 請實作此函式
+  const allCategories =products.map(function(item) {
+   return item.category;
+  });
+  return [...new Set(allCategories)]; //去除重覆的項目
 }
 
 /**
@@ -30,6 +40,7 @@ function getAllCategories(products) {
 function formatDate(timestamp) {
   // 請實作此函式
   // 提示：dayjs.unix...
+   return dayjs.unix(timestamp).format('YYYY/MM/DD HH:mm');
 }
 
 /**
@@ -43,6 +54,14 @@ function getDaysAgo(timestamp) {
   // 1. 用 dayjs() 取得今天
   // 2. 用 dayjs.unix(timestamp) 取得日期
   // 3. 用 .diff() 計算天數差異
+   const today = dayjs();  
+  const orderDate = dayjs.unix(timestamp);
+  const diffDays = today.diff(orderDate, 'day');
+  if (diffDays === 0) {
+    return '今天';
+  } else {
+    return `${diffDays} 天前`;
+  }  
 }
 
 /**
@@ -58,7 +77,32 @@ function getDaysAgo(timestamp) {
  * - payment: 必須是 'ATM', 'Credit Card', 'Apple Pay' 其中之一
  */
 function validateOrderUser(data) {
-  // 請實作此函式
+  const errors = [];   
+  const regexTel = /^09\d{8}$/;
+  const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+  const validPayments = ['ATM', 'Credit Card', 'Apple Pay']; 
+ 
+    
+    if (!data.name || data.name.trim().length === 0) {      
+      errors.push('姓名不可為空');
+    }
+    if (!data.tel || !regexTel.test(data.tel)) {      
+      errors.push('電話號碼格式不正確');
+    }
+    if (!data.email || !regexEmail.test(data.email)) {      
+      errors.push('電子郵件格式不正確');
+    }
+    if (!data.address || data.address.trim().length === 0) {      
+      errors.push('地址不可為空');
+    }
+    if (!validPayments.includes(data.payment)) {      
+      errors.push('付款方式不正確');
+    }
+    
+    return { 
+      isValid: errors.length === 0, 
+      errors 
+    };
 }
 
 /**
@@ -73,6 +117,16 @@ function validateOrderUser(data) {
  */
 function validateCartQuantity(quantity) {
   // 請實作此函式
+  if (!Number.isInteger(quantity) ) {
+    return { isValid: false, error: '必須是正整數' };
+  };
+  if (quantity < 1 ) {
+    return { isValid: false, error: '不可小於 1' };
+  };
+    if ( quantity > 99) {
+    return { isValid: false, error: '不可大於 99' };
+  };
+  return { isValid: true };
 }
 
 /**
@@ -91,7 +145,7 @@ function validateCartQuantity(quantity) {
  * 
  */
 function formatCurrency(amount) {
-  // 請實作此函式
+  return `NT$ ${amount.toLocaleString("zh-TW")}`;
 }
 
 module.exports = {
